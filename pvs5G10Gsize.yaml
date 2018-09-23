@@ -1,0 +1,16 @@
+- hosts: localhost
+  name: Create definitions files for PVs 5G/10G size
+  tasks:
+    - name: Create 25 def files for PVs 5G size
+      script: /etc/ansible/pvs5Gsize.sh
+
+    - name: Create 25 def files for PVs 10G size
+      script: /etc/ansible/pvs10Gsize.sh
+
+#    - name: Create 25 definition file
+#      shell: ls -l /root/5gpvs/* | oc create -f -
+
+#    - name: Create 25 definition file
+#      shell: ls -l /root/10gpvs/* | oc create -f -
+
+

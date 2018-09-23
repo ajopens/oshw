@@ -1,0 +1,69 @@
+- hosts: all
+  name: Prepare GUID env variable across all hosts
+  tasks:
+    - name: All GUID env variable
+      shell: export GUID=`hostname | cut -d"." -f2`; echo "export GUID=$GUID" >> $HOME/.bashrc
+
+- hosts: localhost
+  name: Generate Inventory Hosts File
+  tasks:
+    - name: Generate Inventory script
+      script: /etc/ansible/testdir/1.sh
+
+- hosts: nodes
+  name: Verify Docker
+  tasks:
+    - name: docker restart
+      shell: systemctl restart docker
+      
+- hosts: nfs
+  name: Verify NFS Shared Volumes on Hosts 
+  tasks: 
+    - name: NFS volumes are shared
+      shell: exportfs
+
+- hosts: localhost
+  name: Install a list of openshift packages  
+  tasks:
+    - name: required packages are present
+      yum:
+        name:
+          - atomic-openshift-utils
+          - atomic-openshift-clients
+        state: present
+        
+- hosts: localhost
+  name: Install prerequistes
+  tasks:
+    - name: Execute prerequistes script
+      script: /etc/ansible/testdir/2.sh
+
+- hosts: localhost
+  name: Execute the openshift-ansible Deployer
+  tasks:
+    - name: Execute install script
+      script: /etc/ansible/testdir/3.sh 
+
+- hosts: masters[0]
+  name: Verify OpenShift Cluster
+  tasks:
+    - name: copy the .kube directory from master1 to your bastion
+      copy: 
+        src: /root/.kube/config
+        dest: /root/.kube/config
+        mode: 0774
+
+- hosts: localhost
+  name: Basic sanity check
+  tasks:
+      - name: login
+        shell: oc login -u system:admin
+
+- hosts: nfs
+  name: Create PVs for Users
+  tasks:
+    - name:
+      script: /etc/ansible/testdir/createnfspvs.sh
+    - name: Restarting NFS Server
+      shell: systemctl restart nfs-server
+
