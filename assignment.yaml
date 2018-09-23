@@ -8,7 +8,7 @@
   name: Generate Inventory Hosts File
   tasks:
     - name: Generate Inventory script
-      script: /etc/ansible/testdir/1.sh
+      script: /etc/ansible/oshw/hostssetup.sh
 
 - hosts: nodes
   name: Verify Docker
@@ -36,13 +36,13 @@
   name: Install prerequistes
   tasks:
     - name: Execute prerequistes script
-      script: /etc/ansible/testdir/2.sh
+      script: /etc/ansible/oshw/prereqcheck.sh
 
 - hosts: localhost
   name: Execute the openshift-ansible Deployer
   tasks:
     - name: Execute install script
-      script: /etc/ansible/testdir/3.sh 
+      script: /etc/ansible/oshw/deploy.sh 
 
 - hosts: masters[0]
   name: Verify OpenShift Cluster
