@@ -82,7 +82,7 @@
   - name: 3 etcd instances are working
     shell: oc get componentstatus | grep etcd
   - name: load balancer to access the masters
-    shell: oc login -u system:admin https://loadbalancer.$GUID.example.opentlc.com
+    shell: oc login -u system:admin
   - name: load balancer or DNS for both infra nodes
     shell: |
       host test.apps.$GUID.example.opentlc.com
