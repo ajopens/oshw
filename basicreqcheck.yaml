@@ -1,0 +1,8 @@
+- hosts: localhost
+  name: Basic requirement sanity check
+  tasks:
+      - name: create smoke-test project
+        shell: |
+          oc login -u andrew -p r3dh4t1!
+          oc new-project smoke-test
+          oc new-app nodejs-mongo-persistent

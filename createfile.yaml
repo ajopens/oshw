@@ -1,0 +1,4 @@
+- hosts: localhost
+  tasks:
+      - name: login
+        shell: oc login -u system:admin

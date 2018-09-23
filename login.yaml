@@ -1,0 +1,6 @@
+---
+- hosts: localhost
+  name: Basic sanity check
+  tasks:
+      - name: login
+        shell: oc login -u system:admin

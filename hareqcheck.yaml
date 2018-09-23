@@ -1,0 +1,12 @@
+- hosts: localhost
+  name: HA Requirements check
+  tasks:
+  - name: 3 etcd instances are working
+    shell: oc get componentstatus | grep etcd
+  - name: load balancer to access the masters
+    shell: oc login -u system:admin https://loadbalancer.$GUID.example.opentlc.com
+  - name: load balancer or DNS for both infra nodes
+    shell: |
+      host test.apps.$GUID.example.opentlc.com
+  - name: at least two infranodes
+    shell: oc get nodes --show-labels | grep env=infra
