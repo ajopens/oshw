@@ -1,0 +1,102 @@
+- hosts: all
+  name: Prepare GUID env variable across all hosts
+  tasks:
+    - name: All GUID env variable
+      shell: export GUID=`hostname | cut -d"." -f2`; echo "export GUID=$GUID" >> $HOME/.bashrc
+
+- hosts: localhost
+  name: Generate Inventory Hosts File
+  tasks:
+    - name: Generate Inventory script
+      script: /etc/ansible/testdir/1.sh
+
+- hosts: nodes
+  name: Verify Docker
+  tasks:
+    - name: docker restart
+      shell: systemctl restart docker
+      
+- hosts: nfs
+  name: Verify NFS Shared Volumes on Hosts 
+  tasks: 
+    - name: NFS volumes are shared
+      shell: exportfs
+
+- hosts: localhost
+  name: Install a list of openshift packages  
+  tasks:
+    - name: required packages are present
+      yum:
+        name:
+          - atomic-openshift-utils
+          - atomic-openshift-clients
+        state: present
+        
+- hosts: localhost
+  name: Install prerequistes
+  tasks:
+    - name: Execute prerequistes script
+      script: /etc/ansible/testdir/2.sh
+
+- hosts: localhost
+  name: Execute the openshift-ansible Deployer
+  tasks:
+    - name: Execute install script
+      script: /etc/ansible/testdir/3.sh 
+
+- hosts: masters[0]
+  name: Verify OpenShift Cluster
+  tasks:
+    - name: copy the .kube directory from master1 to your bastion
+      copy: 
+        src: /root/.kube/config
+        dest: /root/.kube/config
+        mode: 0774
+
+- hosts: localhost
+  name: Basic sanity check
+  tasks:
+      - name: login
+        shell: oc login -u system:admin
+
+- hosts: nfs
+  name: Create PVs for Users
+  tasks:
+    - name:
+      script: /etc/ansible/testdir/createnfspvs.sh
+    - name: Restarting NFS Server
+      shell: systemctl restart nfs-server
+
+- hosts: localhost
+  name: Create definitions files for PVs 5G/10G size
+  tasks:
+    - name: Create 25 def files for PVs 5G size
+      script: /etc/ansible/pvs5Gsize.sh
+
+    - name: Create 25 def files for PVs 10G size
+      script: /etc/ansible/pvs10Gsize.sh
+
+- hosts: localhost
+  name: HA Requirements check
+  tasks:
+  - name: 3 etcd instances are working
+    shell: oc get componentstatus | grep etcd
+  - name: load balancer to access the masters
+    shell: oc login -u system:admin https://loadbalancer.$GUID.example.opentlc.com
+  - name: load balancer or DNS for both infra nodes
+    shell: |
+      host test.apps.$GUID.example.opentlc.com
+  - name: at least two infranodes
+    shell: oc get nodes --show-labels | grep env=infra
+
+- hosts: localhost
+  name: Basic requirement sanity check
+  tasks:
+      - name: create smoke-test project
+        shell: |
+          oc login -u andrew -p r3dh4t1!
+          oc new-project smoke-test
+          oc new-app nodejs-mongo-persistent
+
+
+
