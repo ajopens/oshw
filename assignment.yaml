@@ -63,7 +63,7 @@
   name: Create PVs for Users
   tasks:
     - name:
-      script: /etc/ansible/testdir/createnfspvs.sh
+      script: /etc/ansible/oshw/createnfspvs.sh
     - name: Restarting NFS Server
       shell: systemctl restart nfs-server
 
@@ -71,10 +71,10 @@
   name: Create definitions files for PVs 5G/10G size
   tasks:
     - name: Create 25 def files for PVs 5G size
-      script: /etc/ansible/pvs5Gsize.sh
+      script: /etc/ansible/oshw/pvs5Gsize.sh
 
     - name: Create 25 def files for PVs 10G size
-      script: /etc/ansible/pvs10Gsize.sh
+      script: /etc/ansible/oshw/pvs10Gsize.sh
 
 - hosts: localhost
   name: HA Requirements check
