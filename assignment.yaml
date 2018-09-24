@@ -44,6 +44,12 @@
     - name: Execute install script
       script: /etc/ansible/oshw/deploy.sh 
 
+- hosts: localhost
+  name: Verify OpenShift Cluster
+  tasks:
+    - name: copy the .kube directory from master1 to your bastion
+      script: fetchkubefile.sh
+
 - hosts: masters[0]
   name: Verify OpenShift Cluster
   tasks:

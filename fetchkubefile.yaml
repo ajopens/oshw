@@ -1,0 +1,5 @@
+- hosts: localhost
+  name: Verify OpenShift Cluster
+  tasks:
+    - name: copy the .kube directory from master1 to your bastion
+      script: fetchkubefile.sh
