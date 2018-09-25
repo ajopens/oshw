@@ -8,7 +8,7 @@
   name: Generate Inventory Hosts File
   tasks:
     - name: Generate Inventory script
-      script: /etc/ansible/oshw/hostssetup.sh
+      script: hostssetup.sh
 
 - hosts: nodes
   name: Verify Docker
@@ -36,13 +36,13 @@
   name: Install prerequistes
   tasks:
     - name: Execute prerequistes script
-      script: /etc/ansible/oshw/prereqcheck.sh
+      script: prereqcheck.sh
 
 - hosts: localhost
   name: Execute the openshift-ansible Deployer
   tasks:
     - name: Execute install script
-      script: /etc/ansible/oshw/deploy.sh 
+      script: deploy.sh 
 
 - hosts: localhost
   name: Verify OpenShift Cluster
@@ -50,14 +50,14 @@
     - name: copy the .kube directory from master1 to your bastion
       script: fetchkubefile.sh
 
-- hosts: masters[0]
-  name: Verify OpenShift Cluster
-  tasks:
-    - name: copy the .kube directory from master1 to your bastion
-      copy: 
-        src: /root/.kube/config
-        dest: /root/.kube/config
-        mode: 0774
+#- hosts: masters[0]
+#  name: Verify OpenShift Cluster
+#  tasks:
+#    - name: copy the .kube directory from master1 to your bastion
+#      copy: 
+#        src: /root/.kube/config
+#        dest: /root/.kube/config
+#        mode: 0774
 
 - hosts: localhost
   name: Basic sanity check
@@ -69,7 +69,7 @@
   name: Create PVs for Users
   tasks:
     - name:
-      script: /etc/ansible/oshw/createnfspvs.sh
+      script: createnfspvs.sh
     - name: Restarting NFS Server
       shell: systemctl restart nfs-server
 
@@ -77,10 +77,10 @@
   name: Create definitions files for PVs 5G/10G size
   tasks:
     - name: Create 25 def files for PVs 5G size
-      script: /etc/ansible/oshw/pvs5Gsize.sh
+      script: pvs5Gsize.sh
 
     - name: Create 25 def files for PVs 10G size
-      script: /etc/ansible/oshw/pvs10Gsize.sh
+      script: pvs10Gsize.sh
 
 - hosts: localhost
   name: HA Requirements check
