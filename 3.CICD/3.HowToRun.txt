@@ -9,3 +9,9 @@
 
 
 ansible-playbook create-pipeline-proj.yaml
+
+Run limit-range.yaml
+
+oc create -f tasks-hpa.yaml
+
+oc rollout latest hello-openshift -n tasks-prod
