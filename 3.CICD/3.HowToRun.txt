@@ -10,8 +10,7 @@
 
 ansible-playbook create-pipeline-proj.yaml
 
-Run limit-range.yaml
 
-oc create -f tasks-hpa.yaml
+#HPA working on production deployment of openshift-tasks in project tasks-prod
 
-oc rollout latest hello-openshift -n tasks-prod
+ansible-playbook create-task-hpa.yaml
