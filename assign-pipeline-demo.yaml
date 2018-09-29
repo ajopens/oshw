@@ -17,13 +17,14 @@ items:
       jenkinsPipelineStrategy:
         jenkinsfile: |
                           node {
-                              stage ("Build in tasks-build") {
+                              stage ("tasks-build : Build in tasks-build") {
                                     echo '********  Build Starting ******** '
                                     openshiftBuild bldCfg: 'openshift-tasks', buildName: '', checkForTriggeredDeployments: 'false', commitID: '', namespace: 'tasks-build', showBuildLogs: 'true', verbose: 'true'
                                     openshiftVerifyBuild bldCfg: 'openshift-tasks', checkForTriggeredDeployments: 'false', namespace: 'tasks-build', verbose: 'false'
-                                    echo '********  Build Complete ******** '
+                                    echo '********  Build Complete, create DEV tag: devready ******** '
+                                    openshiftTag(srcStream: 'openshift-tasks', srcTag: 'latest', destStream: 'openshift-tasks', destTag: 'devready')
                               }
-                              stage ('Promote to DEV and Verify deployment in Development Env') {
+                              stage ('tasks-dev : Promote to DEV and Verify deployment in Development Env') {
                                     echo '********  Deployment Starting ******** '
                                     openshiftDeploy depCfg: 'openshift-tasks', namespace: 'tasks-dev', verbose: 'false', waitTime: ''
                                     openshiftVerifyDeployment depCfg: 'openshift-tasks', namespace: 'tasks-dev', replicaCount: '1', verbose: 'false', verifyReplicaCount: 'false', waitTime: ''
@@ -32,10 +33,10 @@ items:
                                     echo '********  Service Verification Starting for DEV environment ******** '
                                     openshiftVerifyService namespace: 'tasks-dev', svcName: 'openshift-tasks', verbose: 'false'
                                     echo '********  Service Verification Complete ******** '
-                                    openshiftTag(srcStream: 'openshift-tasks', srcTag: 'latest', destStream: 'openshift-tasks', destTag: 'testready')
+                                    openshiftTag(srcStream: 'openshift-tasks', srcTag: 'devready', destStream: 'openshift-tasks', destTag: 'testready')
       
                                }                               
-                              stage ('Promote to Test and Verify deployment in Testing Env') {
+                              stage ('tasks-test : Promote to Test and Verify deployment in Testing Env') {
                                     echo "********  Deploy testready build in tasks-test project  ******** "
                                     openshiftDeploy depCfg: 'openshift-tasks', namespace: 'tasks-test', verbose: 'false', waitTime: ''
                                     openshiftVerifyDeployment depCfg: 'openshift-tasks', namespace: 'tasks-test', replicaCount: '1', verbose: 'false', verifyReplicaCount: 'false', waitTime: ''
@@ -47,7 +48,7 @@ items:
                                     openshiftTag(srcStream: 'openshift-tasks', srcTag: 'testready', destStream: 'openshift-tasks', destTag: 'prodready')                                          
                                }   
 
-                              stage ('Promote to Production and Verify deployment') {
+                              stage ('tasks-prod : Promote to Production and Verify deployment') {
                                     echo "********  Deploy testready build in tasks-prod project  ******** "
                                     
                                     openshiftDeploy depCfg: 'openshift-tasks', namespace: 'tasks-prod', verbose: 'false', waitTime: ''
