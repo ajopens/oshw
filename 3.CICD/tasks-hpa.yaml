@@ -1,7 +1,7 @@
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: task-hpa
+  name: openshift-tasks
   namespace: tasks-prod
 spec:
   maxReplicas: 10
