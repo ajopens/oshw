@@ -1,7 +1,32 @@
 
 
 # Checkout the the yaml and script files from github
-# Run following command from command prompt to create an HA environment
 
+For example :
+
+git clone https://github.com/ajenaperficient/assignment.git
+
+*****************************************************
+cd assignment/1.SetupHAEnv
+
+ansible-playbook ha-env-setup.yaml
+
+*****************************************************
+cd assignment/2.PostSetupCheck
 
 ansible-playbook postdeploy.yaml
+
+*****************************************************
+cd assignment/3.CICD
+
+ansible-playbook create-pipeline-proj.yaml
+
+ansible-playbook create-task-hpa.yaml
+
+*****************************************************
+cd assignment/5.Multitenancy
+
+ansible-playbook todo.yaml
+
+
+

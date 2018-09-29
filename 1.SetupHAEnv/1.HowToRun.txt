@@ -4,4 +4,4 @@
 # Run following command from command prompt to create an HA environment
 
 
-ansible-playbook postdeploy.yaml
+ansible-playbook ha-env-setup.yaml
