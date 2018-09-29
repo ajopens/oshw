@@ -1,0 +1,7 @@
+
+
+# Checkout the the yaml and script files from github
+# Run following command from command prompt to create an HA environment
+
+
+ansible-playbook postdeploy.yaml
