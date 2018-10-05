@@ -4,6 +4,7 @@
   tasks:
       - name: create cicd-pripe line demo
         shell: |
+          oc login -u system:admin
           oc new-project cicd-dev --description="cicd demo" --display-name="CICD-DEV Project"
           oc new-app jenkins-persistent -p ENABLE_OAUTH=false -p MEMORY_LIMIT=2Gi -n cicd-dev
           oc adm policy add-role-to-user edit andrew
