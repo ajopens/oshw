@@ -4,9 +4,9 @@
   tasks:
       - name: create cicd-pripe line demo
         shell: |
-          oc login -u andrew -p r3dh4t1!
           oc new-project cicd-dev --description="cicd demo" --display-name="CICD-DEV Project"
           oc new-app jenkins-persistent -p ENABLE_OAUTH=false -p MEMORY_LIMIT=2Gi -n cicd-dev
+          oc adm policy add-role-to-user edit andrew
           
       - debug: msg="Jenkins login and password is admin , password"
       - debug: msg="Pausing for 1 minute for build to complete"
@@ -18,19 +18,24 @@
       - name: create tasks* projects
         shell: |
           oc new-project tasks-build
+          oc adm policy add-role-to-user edit andrew
           oc new-project tasks-dev
+          oc adm policy add-role-to-user edit andrew
           oc new-project tasks-test
+          oc adm policy add-role-to-user edit andrew
           oc new-project tasks-prod
+          oc adm policy add-role-to-user edit andrew
           
       - debug: msg="Projects tasks-build, tasks-dev, tasks-test and tasks-prod are created. "          
 
 - hosts: localhost		  
   tasks:
       - name: Allow jenkins to build in tasks-build project and deploy in the tasks-dev,tasks-test and tasks-prod projects
-        shell: |          
-          oc policy add-role-to-user edit system:serviceaccount:tasks-build:jenkins -n tasks-dev
-          oc policy add-role-to-user edit system:serviceaccount:tasks-build:jenkins -n tasks-test
-          oc policy add-role-to-user edit system:serviceaccount:tasks-build:jenkins -n tasks-prod
+        shell: |
+          oc policy add-role-to-user edit system:serviceaccount:cicd-dev:jenkins -n tasks-build     
+          oc policy add-role-to-user edit system:serviceaccount:cicd-dev:jenkins -n tasks-dev
+          oc policy add-role-to-user edit system:serviceaccount:cicd-dev:jenkins -n tasks-test
+          oc policy add-role-to-user edit system:serviceaccount:cicd-dev:jenkins -n tasks-prod
           
 
 - hosts: localhost		  
@@ -46,7 +51,7 @@
       - name: Use tasks-build project only for  building openshift-tasks application
         shell: |
           oc create -f tasks-bc.yaml -n tasks-build
-          oc create -f createimagestream.yaml -n tasks-build
+          oc create -f createis.yaml -n tasks-build
           
       - debug: msg="Pausing for 1 minute for build to complete in tasks-build project"
  
@@ -85,19 +90,22 @@
   tasks:
       - name: change triggeres to manual
         shell: |
-          oc get dc openshift-tasks -o yaml -n tasks-dev  | sed 's/automatic: true/automatic: false/g' | oc replace -f -
-          oc get dc openshift-tasks -o yaml -n tasks-test | sed 's/automatic: true/automatic: false/g' | oc replace -f -
-          oc get dc openshift-tasks -o yaml -n tasks-prod | sed 's/automatic: true/automatic: false/g' | oc replace -f -
+          oc set triggers dc openshift-tasks --manual -n tasks-dev
+          oc set triggers dc openshift-tasks --manual -n tasks-test
+          oc set triggers dc openshift-tasks --manual -n tasks-prod
+          
           
 - hosts: localhost      
   tasks:
       - name: Deploy pipeline task
-        shell: oc create -f assign-pipeline-demo.yaml -n tasks-build          
+        #shell: oc create -f assign-pipeline-demo.yaml -n tasks-build
+        shell: oc create -f assign-pipeline-demo.yaml -n cicd-dev        
 
       - debug: msg="Pausing for 1 minute for deploy pipeline task to complete" 
-      - pause: seconds=60
+      - pause: seconds=30
       
       - name: Start pipeline
-        shell: oc start-build assign-pipeline-demo -n tasks-build
+        #shell: oc start-build assign-pipeline-demo -n tasks-build
+        shell: oc start-build assign-pipeline-demo -n cicd-dev
         
       - debug: msg="Pipe line build in progress. Please check status in tasks-build project."
