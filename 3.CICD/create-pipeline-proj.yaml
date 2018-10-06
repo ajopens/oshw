@@ -102,14 +102,12 @@
 - hosts: localhost      
   tasks:
       - name: Deploy pipeline task
-        #shell: oc create -f assign-pipeline-demo.yaml -n tasks-build
         shell: oc create -f assign-pipeline-demo.yaml -n cicd-dev        
 
       - debug: msg="Pausing for 1 minute for deploy pipeline task to complete" 
       - pause: seconds=30
       
       - name: Start pipeline
-        #shell: oc start-build assign-pipeline-demo -n tasks-build
         shell: oc start-build assign-pipeline-demo -n cicd-dev
         
       - debug: msg="Pipe line build in progress. Please check status in tasks-build project."
