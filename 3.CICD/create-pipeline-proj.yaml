@@ -66,6 +66,9 @@
           oc tag openshift-tasks:devready openshift-tasks:testready -n tasks-build
           oc tag openshift-tasks:testready openshift-tasks:prodready -n tasks-build
           
+      - debug: msg="Pausing for 1 minute forcreating tag"
+ 
+      - pause: seconds=60
           
 - hosts: localhost          
   tasks:
