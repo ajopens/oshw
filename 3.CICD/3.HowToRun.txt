@@ -14,3 +14,5 @@ ansible-playbook create-pipeline-proj.yaml
 #HPA working on production deployment of openshift-tasks in project tasks-prod
 
 ansible-playbook create-task-hpa.yaml
+
+
