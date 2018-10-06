@@ -1,4 +1,10 @@
 - hosts: localhost
+  name: Prepare GUID env variable across all hosts
+  tasks:
+    - name: All GUID env variable
+      shell: export GUID=`hostname | cut -d"." -f2`; echo "export GUID=$GUID" >> $HOME/.bashrc
+
+- hosts: localhost
   name: Verify OpenShift Cluster
   tasks:
     - name: copy the .kube directory from master1 to your bastion
