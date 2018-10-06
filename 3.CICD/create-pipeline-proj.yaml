@@ -113,3 +113,4 @@
         shell: oc start-build assign-pipeline-demo -n cicd-dev
         
       - debug: msg="Pipe line build in progress. Please check status in tasks-build project."
+      - pause: seconds=90
